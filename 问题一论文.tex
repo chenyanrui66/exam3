@@ -1,0 +1,600 @@
+% ============================================================
+% 整合导言区：国赛格式 + 算法/假设环境 + Draft 提速开关
+% 编译方式: latexmk -xelatex
+% ============================================================
+
+% ---------- 草稿模式开关 ----------
+%\def\FASTDRAFT{}
+
+\ifdefined\FASTDRAFT
+  \documentclass[draft,12pt,a4paper]{ctexart}
+\else
+  \documentclass[fontset=windows,12pt,a4paper]{ctexart}
+\fi
+
+% ---------- 页面几何 ----------
+\usepackage{geometry}
+\geometry{
+    paperwidth=210mm, paperheight=297mm,
+    left=2.5cm, right=2.5cm,
+    top=2.5cm, bottom=2.5cm
+}
+
+% ---------- 数学 ----------
+\usepackage{amsmath,amsfonts,amssymb,bm,amsthm}
+
+% ---------- 图片与颜色 ----------
+\ifdefined\FASTDRAFT
+  \usepackage[draft]{graphicx}
+\else
+  \usepackage{graphicx}
+  \DeclareGraphicsExtensions{.pdf,.png,.jpg,.jpeg}
+\fi
+\usepackage{xcolor}
+
+% ---------- 子图 ----------
+\usepackage{subcaption}
+
+% ---------- 表格 ----------
+\usepackage{booktabs,tabularx,multirow,array,longtable,colortbl}
+\renewcommand{\heavyrulewidth}{2.25pt}
+\renewcommand{\lightrulewidth}{0.75pt}
+\renewcommand{\cmidrulewidth}{0.75pt}
+\renewcommand{\arraystretch}{1.25}
+
+% ---------- 浮动体 ----------
+\usepackage{float}
+
+% ---------- 列表 ----------
+\usepackage[shortlabels]{enumitem}
+\setlist{nosep,leftmargin=1.5em}
+
+% ---------- 算法与代码 ----------
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\floatname{algorithm}{算法}
+\renewcommand{\algorithmicrequire}{\textbf{输入：}}
+\renewcommand{\algorithmicensure}{\textbf{输出：}}
+
+\usepackage{listings}
+\lstset{
+    language=Python,
+    basicstyle=\small\ttfamily,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black}\itshape,
+    stringstyle=\color{orange},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=8pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    frameround=tttt,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    captionpos=b,
+    xleftmargin=2em,
+    xrightmargin=1em,
+    aboveskip=1em,
+    belowskip=1em
+}
+
+% ---------- 页眉页脚 ----------
+\usepackage{fancyhdr,lastpage}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+% ---------- 标题格式 ----------
+\ctexset{
+    section = {
+        number = \chinese{section}、,
+        format = \zihao{3}\heiti\bfseries\centering,
+        beforeskip = 1.0ex plus 0.5ex minus 0.2ex,
+        afterskip  = 1.0ex plus 0.5ex minus 0.2ex
+    },
+    subsection = {
+        format = \zihao{4}\heiti\bfseries\raggedright,
+        beforeskip = 0.8ex plus 0.3ex minus 0.1ex,
+        afterskip  = 0.8ex plus 0.3ex minus 0.1ex
+    },
+    subsubsection = {
+        format = \zihao{-4}\heiti\bfseries\raggedright,
+        beforeskip = 0.5ex plus 0.2ex minus 0.1ex,
+        afterskip  = 0.5ex plus 0.2ex minus 0.1ex
+    }
+}
+
+% ---------- 图表标题格式 ----------
+\usepackage{caption}
+\captionsetup[figure]{labelsep=space, font=small}
+\captionsetup[table]{labelsep=space, font=small}
+
+% ---------- 行距 ----------
+\usepackage{setspace}
+\setstretch{1.25}
+
+% ---------- 数学定理环境 ----------
+\theoremstyle{definition}
+\newtheorem{definition}{定义}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}{引理}[section]
+\newtheorem{assumption}{假设}[section]
+
+% ---------- 绘图 ----------
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\ifdefined\FASTDRAFT
+\else
+  \usetikzlibrary{external}
+  \tikzexternalize[prefix=tikz-cache/]
+\fi
+
+% ---------- 超链接 ----------
+\ifdefined\FASTDRAFT
+  \usepackage[draft,hidelinks,bookmarks=false,unicode=true]{hyperref}
+\else
+  \usepackage[hidelinks,bookmarks=true,bookmarksnumbered=true,unicode=true]{hyperref}
+\fi
+\usepackage{cleveref}
+
+% ---------- 自定义命令 ----------
+\newcommand{\diff}{\mathrm{d}}
+\newcommand{\E}{\mathrm{E}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+% ============================================================
+% 正文开始
+% ============================================================
+\begin{document}
+
+\newcommand{\keywords}[1]{\par\vspace{6pt}\noindent\textbf{关键词：#1}\par}
+\renewcommand{\lstlistingname}{代码}
+
+%================ 首页 =================
+\begin{center}
+  {\zihao{3}\bfseries 基于\textbf{对角线代表性窄条与三层变换截面模型}的BGA-PCB\textbf{等效热弹性参数}估计\par}
+\end{center}
+
+%================ 摘要 =================
+\begin{center}
+  {\zihao{4}\bfseries \textbf{摘\quad 要}}
+\end{center}
+\vspace{0.1cm}
+
+针对问题一，我们考虑到BGA封装在高低温循环工况下角点失效风险较高的实际背景，将PCBA模型抽象为沿封装对角线方向的\textbf{非均质弹性板}。我们建立了\textbf{对角线代表性窄条与三层变换截面模型}，利用\textbf{面积均匀化方法}将离散焊球阵列折算为等效中间层，采用\textbf{层合板理论中的轴向刚度与弯曲刚度分解思路}，分别推导了沿对角线方向的\textbf{等效拉伸杨氏模量}、\textbf{等效弯曲杨氏模量}以及\textbf{等效热膨胀系数}的显式表达式。我们给出了完整的计算流程与\textbf{参数补齐规则}，并通过\textbf{解析退化校验}验证了模型的自洽性。
+
+\vspace{6pt}
+\keywords{BGA封装; \textbf{等效热弹性参数}; \textbf{变换截面法}; \textbf{层合板理论}; 面积均匀化}
+\newpage
+
+%================ 1 问题重述 =================
+\section{问题重述}
+\subsection{问题背景}
+
+BGA封装技术因其高引脚密度和优良的电学性能，已成为现代高性能芯片与印刷电路板互连的主流方案。在服役过程中，封装组件需要经受高低温循环、功率循环及机械振动等多种载荷作用，其中温度循环是导致焊料互连失效的最主要因素之一\\textsuperscript{[4]}。由于PCB、焊球和BGA封装三者的热膨胀系数存在显著差异，温度变化会在层间界面附近诱发热失配应力与应变。经过足够多次循环后，焊料将发生累积塑性变形并最终形成疲劳裂纹，导致电气开路或功能丧失。因此，在封装设计的早期阶段，准确估计关键位置处的等效力学参数和热膨胀参数，对于预判焊料疲劳寿命、优化封装结构具有直接的工程价值。
+
+从力学角度看，PCB-焊球-BGA三层结构本质上是一个沿厚度方向非均质的弹性板。若要在不开展全尺度有限元仿真的前提下，快速评估该结构在对角线方向的刚度系数与热膨胀行为，一个常用的思路是将其等效为一块均匀的单层板。此时，该均匀板需要满足三个基本的等效条件：在相同轴向载荷下产生相同的轴向应变；在相同弯矩下产生相同的曲率；在相同温升下产生相同的中性轴热应变。这三个条件分别对应等效拉伸杨氏模量、等效弯曲杨氏模量和等效热膨胀系数的物理定义。基于上述思想，我们沿封装对角线方向截取单位宽度的代表性窄条，并采用层合板理论中的变换截面方法，建立上述三个等效参数的显式估计模型。
+
+\subsection{问题的提出}
+
+基于上述背景，本文需解决问题一：将PCBA模型视作为非均质的弹性板，估计红圈角点位置沿对角线方向的\textbf{等效拉伸杨氏模量}、\textbf{等效弯曲杨氏模量}和\textbf{等效热膨胀系数}。已知PCB的杨氏模量为$E_1$，热膨胀系数为$CTE_1$; 单个焊球的杨氏模量为$E_2$，热膨胀系数为$CTE_2$; BGA的杨氏模量为$E_3$，热膨胀系数为$CTE_3$。BGA封装的长宽均为$L$，焊球数量为$m \times m$。
+
+%================ 2 问题分析 =================
+\newpage
+\section{问题分析}
+
+本文的总体分析思路如下：首先明确问题一所求的\textbf{三个等效参数}的工程含义与所需信息; 随后建立基于\textbf{代表性窄条}的简化力学模型，将离散焊球均匀化后利用\textbf{层合板理论}\\textsuperscript{[3]}推导显式公式。
+
+问题一属于\textbf{等效物理参数估计问题}。核心在于如何将PCB、焊球阵列和BGA封装这三层非均质结构，简化为一个沿对角线方向具有等效刚度与等效\textbf{热膨胀系数}的均匀窄条。考虑到题目仅给出杨氏模量和热膨胀系数，未给出泊松比，我们拟采用\textbf{一维窄条模型}，在不虚构额外材料参数的前提下完成一阶估计。具体地，我们先用两个红圈角点确定对角线方向，再沿该方向截取单位宽度\textbf{代表性窄条}; 对离散焊球阵列采用\textbf{面积均匀化思想}折算为等效中间层; 最后基于\textbf{变换截面法}分别计算\textbf{拉伸刚度}、\textbf{弹性中性轴}、弯曲刚度和\textbf{热膨胀系数}。
+
+%================ 3 模型假设 =================
+\newpage
+\section{模型假设}
+
+\textbf{1. 温度与材料线性假设：}温度变化为准静态过程，同一厚度截面内温度近似均匀; 三种材料处于线弹性范围，材料参数在所讨论温区内近似为常数。
+
+\textbf{2. 层间连续与界面理想假设：}PCB层和BGA层在所取窄条内连续; 层间界面在失效前保持理想结合，位移连续。
+
+\textbf{3. 焊球均匀化假设：}焊球数量较多，因此焊球阵列可以先均匀化为等效中间层\\textsuperscript{[5]}，用\textbf{有效面积占比}$\phi$描述其离散承载贡献。
+
+\textbf{4. 窄条简化假设：}沿对角线方向截取单位宽度\textbf{代表性窄条}，采用\textbf{Kirchhoff-Love薄板假设}的一维形式，即截面应变沿厚度方向呈线性分布。
+
+\textbf{5. 参数给定假设：}题目给定的$E_1$默认已经代表PCB沿对角线方向的有效模量; 暂不考虑底充胶、焊料蠕变、界面脱粘和应力集中。
+
+%================ 4 符号说明 =================
+\section{符号说明}
+
+本文主要用到以下符号。
+
+\begin{table}[H]\centering
+  \caption{主要符号说明}\label{tab:symbol}
+  \small
+  \begin{tabular}{ccc}
+    \toprule
+    \textbf{符号} & \textbf{说明} & \textbf{单位} \\
+    \midrule
+    $E_1$ & PCB层杨氏模量 & Pa \\
+    $E_2$ & 单个焊球材料杨氏模量 & Pa \\
+    $E_3$ & BGA封装层杨氏模量 & Pa \\
+    $\alpha_1$ & PCB层热膨胀系数，等于$CTE_1$ & 1/K \\
+    $\alpha_2$ & 焊球材料热膨胀系数，等于$CTE_2$ & 1/K \\
+    $\alpha_3$ & BGA层热膨胀系数，等于$CTE_3$ & 1/K \\
+    $L$ & BGA封装边长 & m \\
+    $m$ & 单方向焊球数量，总数量为$m^2$ & 无量纲 \\
+    $h_1,h_2,h_3$ & PCB层、焊球层和BGA层厚度 & m \\
+    $h$ & 三层总厚度 & m \\
+    $\phi$ & \textbf{焊球层有效面积占比} & $0 \leq \phi \leq 1$ \\
+    $\chi_i$ & 第$i$层折算系数 & 无量纲 \\
+    $q_i$ & 第$i$层折算模量，$q_i=\chi_i E_i$ & Pa \\
+    $z_n$ & \textbf{弹性中性轴}坐标 & m \\
+    $S_0$ & 单位宽度截面\textbf{轴向刚度系数} & N/m \\
+    $J$ & 关于\textbf{弹性中性轴}的\textbf{弯曲刚度系数} & N$\cdot$m \\
+    $E_{d,t}$ & 沿对角线方向\textbf{等效拉伸杨氏模量} & Pa \\
+    $E_{d,b}$ & 沿对角线方向\textbf{等效弯曲杨氏模量} & Pa \\
+    $\alpha_d$ & 沿对角线方向\textbf{等效热膨胀系数} & 1/K \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+%================ 5 问题一 =================
+\section{问题一：BGA与PCB\textbf{非均质弹性板}的\textbf{等效热弹性参数}估计}
+
+在高低温循环工况下，PCB、焊球阵列和BGA封装由于材料热膨胀系数不同，会在界面附近产生\textbf{热失配变形}。BGA封装角点距离封装中心最远，热失配位移沿对角线方向逐步累积，同时角部又受到自由边缘和离散焊球布置的影响，因此角点通常成为失效风险较高的位置。题目要求我们估计红圈角点沿封装对角线方向的\textbf{等效拉伸杨氏模量}、\textbf{等效弯曲杨氏模量}和\textbf{等效热膨胀系数}。我们的初步思路是先用题图中两个红圈角点确定封装的对角线方向，再沿该方向截取一个\textbf{代表性窄条}，把PCB、焊球阵列和BGA分别处理为三层材料。PCB层和BGA层是连续层，焊球阵列层则不是连续材料，因此我们先用焊球\textbf{有效面积占比}把离散焊球折算为等效中间层，再采用层合结构中的\textbf{变换截面思想}，分别计算\textbf{拉伸刚度}、\textbf{弹性中性轴}、弯曲刚度和\textbf{热膨胀系数}。这里需要提前说明，这种均匀化模型会忽略红圈角点与封装内部、对角线中部之间的平面位置差异; 红圈角点在这里用于定义计算方向和代表性截面，而不是被解析为一个具有独立局部参数的平面坐标点。
+
+另外，我们在选择主模型时也做了一番取舍。我们没把\textbf{Mori Tanaka方法}\\textsuperscript{[6]}作为主模型，因为\textbf{Mori Tanaka方法}适用于夹杂嵌入连续基体的复合材料，而本题中间层是孤立焊球与空气间隙，空气刚度近似为零，不能提供连续基体约束。如果实际结构存在底充胶，我们才可以把焊球视为夹杂、底充胶视为基体，先计算复合中间层的等效模量和热膨胀系数，再代入本文三层公式。\textbf{Hashin与Shtrikman界限}\\textsuperscript{[6]}可以估计多相材料有效弹性模量的允许范围，但本题的关键几何信息是层序、厚度、层中心距和焊球面积占比，直接使用该界限会过宽，因此它更适合作为结果合理性检查，而不适合作为主求解方法。基于这些考虑，我们最终采用\textbf{对角线代表性窄条加三层变换截面模型}作为问题一的基线方案。
+
+需要先明确回答数据充分性问题。仅由题目给出的参数
+$E_1,E_2,E_3,\allowbreak CTE_1,CTE_2,\allowbreak CTE_3,L,m$
+尚不能得到唯一数值结果。弯曲刚度至少还依赖三层厚度$h_1,h_2,h_3$，焊球层贡献还依赖单个焊球的有效承载面积$A_{b,\mathrm{eff}}$或体积$V_b$。因此，我们给出的严谨答案应当是\textbf{显式符号解}、\textbf{参数补齐规则}和\textbf{验证流程}，而不是在缺少几何信息时虚构一个数值。
+
+
+题图中的两个红圈角点位于正方形封装的一条对角线两端。若以封装中心为原点，两个角点的平面坐标为
+\begin{equation}
+P_{c,1}=\left(-\frac{L}{2},-\frac{L}{2}\right),\qquad
+P_{c,2}=\left(\frac{L}{2},\frac{L}{2}\right).
+\end{equation}
+
+因此，对角线方向单位向量为
+\begin{equation}
+\mathbf{e}_d=\frac{1}{\sqrt{2}}(1,1),
+\end{equation}
+整条对角线长度为$\sqrt{2}L$。若从封装中心向任一角点量取路径坐标，则$0 \leq s \leq L/\sqrt{2}$; 若从一个红圈角点量取到另一个红圈角点，则$0 \leq s \leq \sqrt{2}L$。这里的$s$描述平面内的位置，$z$描述厚度方向的位置，二者不能混用。
+
+我们沿$\mathbf{e}_d$截取一条单位宽度\textbf{代表性窄条}。这样处理不是随意降维，而是由题目条件和所求量共同决定的。第一，题目明确询问沿对角线方向的等效参数，窄条模型与该方向直接对应。第二，题目只给出杨氏模量和热膨胀系数，没有给出泊松比，窄条模型可以在不虚构泊松比的情况下完成一阶估计。第三，层间并联承载、中性轴偏移和弯曲\textbf{杠杆效应}都仍然保留。基于这些原因，我们采用\textbf{对角线代表性窄条加三层变换截面模型}作为问题一的基线方案。
+
+必须明确，这个均匀化模型在平面内不区分$s$。也就是说，模型给出的结果同时适用于两个红圈角点所在的代表性截面，但也与对角线其他位置的代表性截面相同。它无法刻画角点相对于内部区域的独立局部刚度差异。若必须区分角点、边缘和内部，我们需要另外建立保留真实焊球位置和角部边界的\textbf{局部子模型}。
+
+
+焊球没有填满整个中间层，空气间隙也不承担拉伸和弯曲载荷。因此，我们定义\textbf{焊球层有效面积占比}为
+\begin{equation}\label{eq:phi}
+\phi=\frac{m^2 A_{b,\mathrm{eff}}}{L^2}.
+\end{equation}
+
+如果从焊球体积出发，且焊球层高度为$h_2$，则有
+\begin{equation}\label{eq:phi-vol}
+\phi=\frac{m^2 V_b}{L^2 h_2}.
+\end{equation}
+
+两个定义通过下式联系：
+\begin{equation}
+A_{b,\mathrm{eff}}=\frac{V_b}{h_2}.
+\end{equation}
+
+这里的$m$不能单独作为刚度权重，因为同样的$m \times m$阵列可能具有完全不同的焊球直径、焊盘尺寸和焊料体积。我们必须用$m$描述阵列密度，再用$A_{b,\mathrm{eff}}$或$V_b$描述单个焊球的承载尺度，二者结合后才进入等效刚度。
+
+角点附近的自由边缘、阵列端部半胞和局部传力路径偏转确实可能削弱焊球层的平均传力能力，但题目没有给出倒角、焊盘尺寸、自由边距离等局部几何信息。我们如果再引入一个角部修正系数，只会把信息缺失包装成一个新的不可标定参数。因此，在理想界面和线弹性等效框架下，我们直接令
+\begin{equation}\label{eq:chi}
+\chi_1=1,\qquad \chi_2=\phi,\qquad \chi_3=1.
+\end{equation}
+
+对应的折算模量为
+\begin{equation}\label{eq:q}
+q_1=E_1,\qquad q_2=\phi E_2,\qquad q_3=E_3.
+\end{equation}
+
+这里的$\phi$已经体现焊球阵列的稀疏程度。角部实际传力效率若低于面积平均预测，则属于\textbf{局部子模型}、界面力学或损伤分析问题，不应再塞回主公式中充当一个无法标定的黑箱系数。
+
+
+在\textbf{Kirchhoff-Love薄板假设}的一维窄条形式下，我们需要建立沿对角线方向的应变分布关系。经典梁理论和经典\textbf{层合板理论}\\textsuperscript{[3]}中的几何应变假设指出，整个截面先随中性轴一起伸缩，再绕中性轴发生线性变化的弯曲变形。Jones和Reddy的\textbf{层合板理论}均采用这一基本框架。针对本题的三层结构，我们所做的改进是把普通连续层合板中的第2层替换为折算系数为$\chi_2$的离散焊球等效层，因此需要在应变描述中引入面积均匀化后的折算系数。
+
+沿对角线方向的应变最初可以写为
+\begin{equation}\label{eq:strain}
+\varepsilon_d(z)=\varepsilon_0+z\kappa,
+\end{equation}
+其中$\varepsilon_0$是参考面应变，$\kappa$是曲率。为了把拉伸和弯曲解耦，我们把参考面移动到\textbf{弹性中性轴}$z_n$，令
+\begin{equation}
+\zeta=z-z_n.
+\end{equation}
+
+于是沿对角线方向的应变改写为
+\begin{equation}\label{eq:strain-neutral}
+\varepsilon_d(z)=\varepsilon_n+\zeta\kappa.
+\end{equation}
+
+第$i$层的热应力分析需要采用线弹性热应力本构关系\\textsuperscript{[1]}。该关系的基本思想是：总应变减去自由热膨胀应变后才是产生应力的机械应变。针对本题，我们在经典一维热弹性本构中引入面积均匀化折算系数$q_i$，将离散焊球层的贡献纳入三层统一框架，得到
+\begin{equation}\label{eq:constitutive}
+\sigma_i(z)=q_i\left(\varepsilon_n+\zeta\kappa-\alpha_i\Delta T\right).
+\end{equation}
+
+单位宽度截面上的轴力和弯矩为
+\begin{equation}\label{eq:force-moment}
+\frac{N}{b}=\sum_{i=1}^{3}\int_{z_i^{(0)}}^{z_i^{(1)}}\sigma_i\,\diff z,
+\qquad
+\frac{M}{b}=\sum_{i=1}^{3}\int_{z_i^{(0)}}^{z_i^{(1)}}\sigma_i\zeta\,\diff z.
+\end{equation}
+
+定义\textbf{轴向刚度系数}\\textsuperscript{[2]}
+\begin{equation}\label{eq:S0}
+S_0=\sum_{i=1}^{3}q_i h_i,
+\end{equation}
+以及关于\textbf{弹性中性轴}的\textbf{弯曲刚度系数}\\textsuperscript{[2]}
+\begin{equation}\label{eq:J}
+J=\sum_{i=1}^{3}q_i\int_{z_i^{(0)}}^{z_i^{(1)}}\zeta^2\,\diff z.
+\end{equation}
+
+我们选择\textbf{弹性中性轴}$z_n$满足
+\begin{equation}\label{eq:neutral}
+\sum_{i=1}^{3}q_i\int_{z_i^{(0)}}^{z_i^{(1)}}\zeta\,\diff z=0.
+\end{equation}
+
+在该坐标下，轴力不再由纯曲率直接产生，弯矩也不再由中性轴均匀应变直接产生，因此拉伸与弯曲分离，后续公式更加简洁。
+
+
+为了估计\textbf{等效拉伸杨氏模量}，我们采用\textbf{轴向力等效}原则：令真实三层窄条与等效均质窄条在相同均匀轴向应变下产生相同的单位宽度轴力。这一思路与\textbf{Voigt均匀应变估计}\textsuperscript{[6]}一致，但针对本题我们做了两点工程改造：第一，把一般多相体积分数改写为层合结构中的厚度权重; 第二，对离散焊球层乘上面积占比$\phi$，避免把空气间隙也当作承载材料。
+
+令$\Delta T=0$且$\kappa=0$，对截面施加均匀拉伸应变$\varepsilon_n$。各层应变相同，因此各层在力学上形成并联关系：
+\begin{equation}
+\sigma_i=q_i\varepsilon_n.
+\end{equation}
+
+单位宽度合力为
+\begin{equation}
+\frac{N}{b}=\sum_{i=1}^{3}q_i h_i\varepsilon_n=S_0\varepsilon_n.
+\end{equation}
+
+如果把整个非均质截面替换成厚度为$h$的均质材料，则
+\begin{equation}
+\frac{N}{b}=E_{d,t}h\varepsilon_n.
+\end{equation}
+
+比较上述两式，得到
+\begin{equation}\label{eq:Edt}
+E_{d,t}=\frac{S_0}{h}
+=\frac{E_1 h_1+\phi E_2 h_2+E_3 h_3}{h_1+h_2+h_3}.
+\end{equation}
+
+这就是题目所问的沿对角线方向\textbf{等效拉伸杨氏模量}。
+
+从物理图像看，式\eqref{eq:Edt}是按刚度厚度加权，而不是简单按厚度加权。某一层的$E_i h_i$越大，它抵抗同一轴向应变的能力越强，对等效拉伸模量的贡献也越大。
+
+
+三层中心坐标分别为
+\begin{equation}\label{eq:zbar}
+\bar{z}_1=\frac{h_1}{2},\qquad
+\bar{z}_2=h_1+\frac{h_2}{2},\qquad
+\bar{z}_3=h_1+h_2+\frac{h_3}{2}.
+\end{equation}
+
+定义\textbf{一阶刚度矩}
+\begin{equation}\label{eq:S1}
+S_1=\sum_{i=1}^{3}q_i h_i\bar{z}_i.
+\end{equation}
+
+由式\eqref{eq:neutral}可得\textbf{弹性中性轴}
+\begin{equation}\label{eq:zn}
+z_n=\frac{S_1}{S_0}
+=\frac{E_1 h_1\bar{z}_1+\phi E_2 h_2\bar{z}_2+E_3 h_3\bar{z}_3}
+{E_1 h_1+\phi E_2 h_2+E_3 h_3}.
+\end{equation}
+
+中性轴不一定位于几何中心$h/2$。如果BGA层更硬或更厚，中性轴向BGA一侧移动; 如果PCB层更硬或更厚，中性轴则向PCB一侧移动。
+
+第$i$层关于自身形心轴的惯性矩系数为
+\begin{equation}
+I_{i,c}=\frac{h_i^3}{12}.
+\end{equation}
+
+根据\textbf{平行移轴定理}\\textsuperscript{[2]}，第$i$层关于整体\textbf{弹性中性轴}的惯性矩系数为
+\begin{equation}\label{eq:Iin}
+I_{i,n}=h_i\left[\frac{h_i^2}{12}+(\bar{z}_i-z_n)^2\right].
+\end{equation}
+
+\textbf{平行移轴定理}是材料力学中的标准几何定理，不是本文新提出的假设。将其与\textbf{变换截面法}\\textsuperscript{[7]}结合，可得多层截面的\textbf{弯曲刚度系数}
+\begin{equation}\label{eq:J-full}
+J=\sum_{i=1}^{3}q_i h_i
+\left[\frac{h_i^2}{12}+(\bar{z}_i-z_n)^2\right].
+\end{equation}
+
+式\eqref{eq:J-full}包含两部分：$h_i^3/12$表示各层绕自身形心轴的\textbf{局部弯曲刚度}，$h_i(\bar{z}_i-z_n)^2$表示各层远离整体中性轴时产生的\textbf{杠杆效应}。对于PCB、焊球和BGA组成的非对称截面，第二部分通常非常重要。如果我们只把各层自身的$E_i h_i^3/12$相加，就会明显低估整体弯曲刚度。
+
+为了估计\textbf{等效弯曲杨氏模量}，我们采用\textbf{弯矩-曲率等效}原则：令真实三层窄条与等效均质窄条在相同曲率下承受相同的单位宽度弯矩。这里需要特别指出的是，$E_{d,t}$与$E_{d,b}$通常不相等。拉伸关注截面上有多少刚度，弯曲还关注这些刚度距离中性轴有多远。靠近中性轴的材料对拉伸仍有贡献，但对弯曲贡献较小; 位于上下表层的材料则会通过\textbf{杠杆效应}显著放大弯曲刚度。因此，对非均质板分别定义拉伸模量和弯曲模量是必要的，而不是重复定义。
+
+纯弯曲时，
+\begin{equation}
+\frac{M}{b}=J\kappa.
+\end{equation}
+
+对厚度为$h$的等效均质窄条，
+\begin{equation}
+\frac{M}{b}=E_{d,b}\frac{h^3}{12}\kappa.
+\end{equation}
+
+比较上述两式，得到
+\begin{equation}\label{eq:Edb}
+E_{d,b}=\frac{12J}{h^3}
+=\frac{12}{h^3}\sum_{i=1}^{3}q_i h_i
+\left[\frac{h_i^2}{12}+(\bar{z}_i-z_n)^2\right].
+\end{equation}
+
+这就是题目所问的沿对角线方向\textbf{等效弯曲杨氏模量}。
+
+
+为了估计\textbf{等效热膨胀系数}，我们采用\textbf{自由热膨胀等效}原则：令真实三层窄条在无外载荷条件下自由热膨胀时，其整体热应变与等效均质窄条的热应变相同。这一思路与经典层合板热分析\textsuperscript{[3]}一致，针对本题的改进在于用面积均匀化折算系数$q_i$代替原始层合板中的连续层刚度，从而把离散焊球层的贡献纳入统一框架。
+
+先考虑结构被迫保持平直的情况，即$\kappa=0$。温度升高$\Delta T$后，各层应力为
+\begin{equation}
+\sigma_i=q_i(\varepsilon_n-\alpha_i\Delta T).
+\end{equation}
+
+自由结构没有外轴力，因此
+\begin{equation}
+\frac{N}{b}=\sum_{i=1}^{3}q_i h_i(\varepsilon_n-\alpha_i\Delta T)=0.
+\end{equation}
+
+整理得到
+\begin{equation}
+S_0\varepsilon_n=
+\left(\sum_{i=1}^{3}q_i h_i\alpha_i\right)\Delta T.
+\end{equation}
+
+定义中性轴处的\textbf{等效热膨胀系数}为
+\begin{equation}\label{eq:alpha}
+\alpha_d=\frac{\varepsilon_n}{\Delta T}
+=\frac{\sum_{i=1}^{3}q_i h_i\alpha_i}{\sum_{i=1}^{3}q_i h_i}.
+\end{equation}
+
+展开为
+\begin{equation}\label{eq:alpha-full}
+\alpha_d=
+\frac{E_1 h_1\alpha_1+\phi E_2 h_2\alpha_2+E_3 h_3\alpha_3}
+{E_1 h_1+\phi E_2 h_2+E_3 h_3}.
+\end{equation}
+
+这就是题目所问的沿对角线方向\textbf{等效热膨胀系数}的中性轴定义。
+
+式\eqref{eq:alpha-full}说明热膨胀系数按$q_i h_i$加权。刚度大的层对整体变形具有更强的约束作用，因此其热膨胀系数在等效结果中权重更大。这与按体积或厚度简单加权不同。Schapery基于能量原理给出了复合材料热膨胀系数按刚度贡献加权的一般思想。我们在这里将其改造成显式三层代数形式，并用$\phi$表示焊球层的离散承载贡献。
+
+
+我们按以下步骤完成计算：
+
+\textbf{步骤1：}计算\textbf{焊球层有效面积占比}
+\begin{equation}
+\phi=\frac{m^2 A_{b,\mathrm{eff}}}{L^2}.
+\end{equation}
+
+\textbf{步骤2：}计算各层折算模量
+\begin{equation}
+q_1=E_1,\qquad q_2=\phi E_2,\qquad q_3=E_3.
+\end{equation}
+
+\textbf{步骤3：}计算总厚度和各层中心坐标
+\begin{align}
+h&=h_1+h_2+h_3,\\
+\bar{z}_1&=\frac{h_1}{2},\qquad
+\bar{z}_2=h_1+\frac{h_2}{2},\qquad
+\bar{z}_3=h_1+h_2+\frac{h_3}{2}.
+\end{align}
+
+\textbf{步骤4：}计算\textbf{轴向刚度系数}
+\begin{equation}
+S_0=\sum_{i=1}^{3}q_i h_i.
+\end{equation}
+
+\textbf{步骤5：}计算\textbf{弹性中性轴}
+\begin{equation}
+z_n=\frac{\sum_{i=1}^{3}q_i h_i\bar{z}_i}{S_0}.
+\end{equation}
+
+\textbf{步骤6：}计算\textbf{弯曲刚度系数}
+\begin{equation}
+J=\sum_{i=1}^{3}q_i h_i
+\left[\frac{h_i^2}{12}+(\bar{z}_i-z_n)^2\right].
+\end{equation}
+
+\textbf{步骤7：}输出三个主要等效参数
+\begin{equation}
+E_{d,t}=\frac{S_0}{h},\qquad
+E_{d,b}=\frac{12J}{h^3},\qquad
+\alpha_d=\frac{\sum_{i=1}^{3}q_i h_i\alpha_i}{S_0}.
+\end{equation}
+
+可直接实现的伪代码如算法\ref{alg:q1}所示。
+
+\begin{algorithm}[H]
+\caption{问题一等效参数计算流程}\label{alg:q1}
+\begin{algorithmic}[1]
+\Require $E_1,E_2,E_3,\alpha_1,\alpha_2,\alpha_3,h_1,h_2,h_3,L,m,A_{\mathrm{eff}}$
+\Ensure $E_{d,t},E_{d,b},\alpha_d$
+\State $\phi \leftarrow m^2 A_{\mathrm{eff}}/(L^2)$
+\State $q_1 \leftarrow E_1$; \quad $q_2 \leftarrow \phi E_2$; \quad $q_3 \leftarrow E_3$
+\State $h \leftarrow h_1+h_2+h_3$
+\State $\bar{z}_1 \leftarrow h_1/2$; \quad $\bar{z}_2 \leftarrow h_1+h_2/2$; \quad $\bar{z}_3 \leftarrow h_1+h_2+h_3/2$
+\State $S_0 \leftarrow q_1 h_1+q_2 h_2+q_3 h_3$
+\State $z_n \leftarrow (q_1 h_1\bar{z}_1+q_2 h_2\bar{z}_2+q_3 h_3\bar{z}_3)/S_0$
+\State $J \leftarrow q_1 h_1\bigl(h_1^2/12+(\bar{z}_1-z_n)^2\bigr)+q_2 h_2\bigl(h_2^2/12+(\bar{z}_2-z_n)^2\bigr)+q_3 h_3\bigl(h_3^2/12+(\bar{z}_3-z_n)^2\bigr)$
+\State $E_{d,t} \leftarrow S_0/h$
+\State $E_{d,b} \leftarrow 12J/h^3$
+\State $\alpha_d \leftarrow (q_1 h_1\alpha_1+q_2 h_2\alpha_2+q_3 h_3\alpha_3)/S_0$
+\State \Return $E_{d,t},E_{d,b},\alpha_d$
+\end{algorithmic}
+\end{algorithm}
+
+
+题目只明确给出六个材料参数以及$L,m$，而$h_1,h_2,h_3$和$A_{b,\mathrm{eff}}$或$V_b$尚未给定。因此，本文结果必须以符号形式保留，待补充几何参数后即可直接代入计算。由于题目没有提供输入参数的概率分布、实测位移或实测曲率，我们不再额外引入不确定度传播或参数反演公式，以免给没有数据支撑的部分增加形式化包装。
+
+%================ 6 模型的分析与检验 =================
+\newpage
+\section{模型的分析与检验}
+
+我们首先进行\textbf{解析退化校验}。若三层材料和折算系数相同，即$q_i=q,\alpha_i=\alpha$，且截面连续，则
+\begin{equation}
+z_n=\frac{h}{2},\qquad J=q\frac{h^3}{12},
+\end{equation}
+从而
+\begin{equation}
+E_{d,t}=q,\qquad E_{d,b}=q,\qquad \alpha_d=\alpha.
+\end{equation}
+
+该结果退化为均质板，说明模型没有引入虚假的\textbf{拉伸弯曲耦合}。
+
+若$\alpha_1=\alpha_2=\alpha_3=\alpha$，则
+\begin{equation}
+\alpha_d=\alpha.
+\end{equation}
+
+这说明三层材料热膨胀系数相同时，模型不会产生额外的人为偏移。
+
+若令$\phi \to 0$，焊球层贡献趋于零，公式退化为PCB和BGA两层通过极弱中间层传力的数学极限。这个结果只用于检查公式趋势。真实结构中如果完全没有焊球，上下层将失去机械连接，模型物理意义也随之失效。
+
+在完成解析校验后，我们建议按两个层级进行数值验证：
+
+\textbf{1.}均质板算例，检验$E_{d,t}=E_{d,b}=E,\alpha_d=\alpha$;
+
+\textbf{2.}三层算例，与完整\textbf{ABD层合板计算}\\textsuperscript{[3]}比较。
+
+如果需要进一步提高角部可信度，我们可建立两类有限元模型。第一类是一个焊球\textbf{周期胞的代表性单元模型}，用来校准$\phi$; 第二类是保留角部若干排真实焊球的\textbf{局部子模型}，用来检查自由边缘效应。比较指标建议采用\textbf{整体系数误差}，而不是直接比较局部峰值应力：
+\begin{equation}
+R_E=\left|\frac{E^{\mathrm{FE}}-E^{\mathrm{model}}}{E^{\mathrm{FE}}}\right|,
+\qquad
+R_\alpha=\left|\frac{\alpha^{\mathrm{FE}}-\alpha^{\mathrm{model}}}{\alpha^{\mathrm{FE}}}\right|.
+\end{equation}
+
+如果误差主要来自角部，我们应使用\textbf{局部子模型}重新评估该区域，而不是在主公式中额外塞入一个无法标定的修正系数。
+
+\subsection{适用范围与限制}
+
+本模型适用于问题一所要求的快速、可解释估计，也适用于比较不同材料模量、热膨胀系数、层厚、焊球数量和封装尺寸对整体刚度及热失配的影响。它可以作为后续问题二和问题三中更复杂分层结构与缺陷焊球模型的解析基线。
+
+本模型也有明确限制。第一，等效模量是平均刚度，不等于角点峰值应力，疲劳评估还需要应力集中系数或局部有限元结果。第二，均匀化模型忽略了红圈角点与封装内部、边缘中部之间的平面位置差异，因此结果应理解为过角点代表性截面的平均参数，而不是角点独有的局部参数。第三，模型不描述焊料蠕变、塑性和时间相关变形。第四，理想界面假设不适用于脱层发生后的结构。第五，角部自由边缘和稀疏焊球可能导致实际刚度低于面积平均预测，如需精确评估，应建立保留真实焊球几何的\textbf{局部子模型}。第六，PCB通常具有方向性，题目只给出一个$E_1$，因此我们默认该值已经是沿对角线方向的有效模量。
+
+%================ 参考文献 =================
+\newpage
+\zihao{5}
+\begin{thebibliography}{99}
+  \bibitem{voigt1889} W. Voigt. Ueber die Beziehung zwischen den beiden Elasticit\"atsconstanten isotroper K\"orper. \textit{Annalen der Physik}, 274, 573--587, 1889.
+  \bibitem{jones1999} R. M. Jones. \textit{Mechanics of Composite Materials}, 2nd ed. Taylor \& Francis, 1999.
+  \bibitem{reddy2004} J. N. Reddy. \textit{Mechanics of Laminated Composite Plates and Shells: Theory and Analysis}, 2nd ed. CRC Press, 2004.
+  \bibitem{schapery1968} R. A. Schapery. Thermal Expansion Coefficients of Composite Materials Based on Energy Principles. \textit{Journal of Composite Materials}, 2(3), 380--404, 1968.
+  \bibitem{li2006} 李英梅，刘军. 焊点与底充胶夹层等效弹性常数的简化分析. \textit{力学与实践}, 28(3), 2006.
+  \bibitem{mori1973} T. Mori, K. Tanaka. Average Stress in Matrix and Average Elastic Energy of Materials with Misfitting Inclusions. \textit{Acta Metallurgica}, 21, 571--574, 1973.
+  \bibitem{hashin1963} Z. Hashin, S. Shtrikman. A Variational Approach to the Theory of the Elastic Behaviour of Multiphase Materials. \textit{Journal of the Mechanics and Physics of Solids}, 11(2), 127--140, 1963.
+\end{thebibliography}
+
+\end{document}

@@ -241,7 +241,7 @@ BGA和QFN封装技术因其高引脚密度和优良的电学性能，已成为�
 
 我们考虑到\textbf{Mori Tanaka方法}$^{\textbf{[\ref{ref:6}]}}$适用于夹杂嵌入连续基体的复合材料，而本题中间层是孤立焊球与空气间隙，空气刚度近似为零，不能提供连续基体约束,因此没有选择为主模型。\textbf{Hashin与Shtrikman界限}$^{\textbf{[\ref{ref:7}]}}$可以估计多相材料有效弹性模量的允许范围，但本题的关键几何信息是层序、厚度、层中心距和焊球面积占比，直接使用该界限会过宽，因此它更适合作为结果合理性检查，而不适合作为主求解方法。基于这些考虑，我们最终采用\textbf{对角线代表性窄条加三层变换截面模型}作为问题一的基线方案。
 
-问题一的建模基于第三部分给出的模型假设，涉及的主要符号如下表所示。
+问题一涉及的主要符号如下表所示。
 
 \begin{table}[H]\centering
   \caption{问题一主要符号说明}\label{tab:symbol-q1}
@@ -282,6 +282,14 @@ BGA和QFN封装技术因其高引脚密度和优良的电学性能，已成为�
 式中，$s$ 为平面内路径坐标，不能与厚度方向坐标 $z$ 混用。均匀化后所得参数不随 $s$ 改变，红圈角点仅用于确定研究方向。
 
 我们沿$\mathbf e_d$截取一条单位宽度代表性窄条。该处理由题目条件和所求量共同决定,因为题目明确询问沿对角线方向的等效参数，窄条模型与该方向直接对应。并且，题目只给出杨氏模量和热膨胀系数，没有给出泊松比，窄条模型可以在不虚构泊松比的情况下完成一阶估计。层间并联承载、中性轴偏移和弯曲杠杆效应在模型中仍然保留。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{output/figs/问题一对角线图.png}
+  \caption{问题一：BGA封装对角线代表性窄条示意}\label{fig:q1-diagonal}
+\end{figure}
+
+图~\ref{fig:q1-diagonal}(a)给出BGA封装俯视图，红色窄条为从封装中心$O$沿对角线至高风险角点$P$的单位宽度代表性窄条，$s$为路径坐标；(b)给出沿对角线方向的截面分层示意。该图直观展示了本文三问统一采用的对角线窄条建模口径。
 
 焊球没有填满整个中间层，空气间隙也不承担拉伸和弯曲载荷。设焊球为\textbf{圆柱体},单球有效承载面积为 $A_{b,\mathrm{eff}}$,据此折算离散的焊球层的贡献。
 \begin{equation}\label{eq:phi}
@@ -545,6 +553,14 @@ I_r=(b_{r-1},b_r),
 $
 该写法不预设$LD_1$与$LD_3$的大小关系。每个$I_r$内材料组合不变，因此每段只需建立一个局部截面模型。
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{output/figs/问题二QFN对角线路径分区示意.png}
+  \caption{问题二：QFN对角线路径分区示意}\label{fig:q2-segments}
+\end{figure}
+
+图~\ref{fig:q2-segments}沿QFN中心至角点的半对角线将路径按几何占域划分为若干段，从左至右依次为：中心芯片—铜盘区、芯片边缘区、铜盘边缘区、引脚—焊料区、角点环氧区。各段因芯片、铜盘和焊料的存在与否而具有不同的层合结构，断点集合$\mathcal B$中的$b_0,LD_1,LD_3,s_S^-,s_S^+,LD_2$对应各段边界。
+
 所有区段统一取参考线
 \begin{equation}\label{eq:q2-zstar}
 z_*=\frac{H_5}{2}.
@@ -578,6 +594,15 @@ m_r^T=\int_{z_0}^{z_3}E_r(z)\alpha_r(z)(z-z_*)\,\diff z.
 \begin{bmatrix}\varepsilon_{0r}\\\kappa_r\end{bmatrix}
 -\mathbf t_r\Delta T.
 \end{equation}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{output/figs/问题二QFN局部ABD到路径柔度串联.png}
+  \caption{问题二：局部ABD截面到路径柔度串联示意}\label{fig:q2-abd-series}
+\end{figure}
+
+图~\ref{fig:q2-abd-series}左侧给出以$z_*=H_5/2$为共同参考线的局部截面材料分布，右侧示意广义内力$\mathbf p=[N,M]^{\mathsf T}$沿路径连续传递，各段以柔度矩阵$\mathbf K_r^{-1}$串联，整体平均应变由式~\eqref{eq:q2-Cbar}--\eqref{eq:q2-gbar}给出。
+
 这里的$2\times2$ ABD是问题一变换截面模型的直接推广：$A_r$描述拉伸，$D_r$描述弯曲，$B_r$保留非对称截面产生的拉伸与弯曲耦合。
 
 基础模型假设对角线窄条上无分布轴力和分布弯矩，因此广义内力$\mathbf p=[N,M]^{\mathsf T}$在各段连续，而各段应变和曲率可以不同。由式\eqref{eq:q2-constitutive}可得
@@ -887,6 +912,14 @@ $
 
 于是路径分为三段：区段$I_1=[0,s_{\mathrm{die}}]$包含PCB、连接层（全局$E_{\mathrm c}$）、基板、芯片和芯片上覆膜；区段$I_2=(s_{\mathrm{die}},L_{\mathrm D}-w]$包含PCB、连接层（全局$E_{\mathrm c}$）、基板和完整覆膜；区段$I_3=(L_{\mathrm D}-w,L_{\mathrm D}]$包含PCB、连接层（窗口$E_{\mathrm c}^{\mathrm{win}}$）、基板和完整覆膜。
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{output/figs/问题三BGA_对角线三区段.png}
+  \caption{问题三：BGA对角线三区段划分}\label{fig:q3-segments}
+\end{figure}
+
+图~\ref{fig:q3-segments}给出BGA封装对角线方向的三区段几何示意：$I_1$为芯片覆盖段，$I_2$为芯片外缘至角点窗口前缘的中段，角点窗口$I_3$为距角点$w=3p$的等腰直角三角形区域。三段的连接层模量分别采用全局折算值$E_{\mathrm c}$与窗口局部值$E_{\mathrm c}^{\mathrm{win}}$。
+
 BGA各材料层沿厚度方向非对称分布，层间热失配会同时引起面内伸长与弯曲，因此我们采用ABD理论统一描述轴向应变、曲率及二者的耦合。在\textbf{拉伸弯曲共同响应假设}下，代理连接层与相邻PCB、基板共享截面轴向应变和曲率，不能只作为面内拉伸层计入$A_r$，而应与其他连续层一样按其厚度坐标同时贡献$A_r$、$B_r$和$D_r$。统一以PCB底面为$z=0$，取参考面$z_*=h/2$，第$r$段沿对角线的应变场为
 \begin{equation}\label{eq:q3-strain}
 \varepsilon_r(z)=\varepsilon_{0r}+(z-z_*)\kappa_r.
@@ -916,6 +949,15 @@ m_r^{\mathrm{th}}=\int_0^h E_r(z)\alpha_r(z)(z-z_*)\,\diff z.
 \begin{bmatrix}\varepsilon_{0r}\\\kappa_r\end{bmatrix}
 -\mathbf t_r\Delta T.
 \end{equation}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{output/figs/问题三_三区段传力与应变曲率示意图.png}
+  \caption{问题三：三区段传力与应变曲率示意}\label{fig:q3-strain-curvature}
+\end{figure}
+
+图~\ref{fig:q3-strain-curvature}对比了$I_1$芯片覆盖段与$I_2$中段的截面结构差异：$I_1$段在基板上方存在芯片层，$I_2$段则无芯片；两段均包含覆膜、基板、连接层和PCB。广义内力$N,M$沿路径连续传递，各层共享轴向应变$\varepsilon_{0r}$和曲率$\kappa_r$，截面呈线性应变分布，如式~\eqref{eq:q3-strain}所示。
+
 三个路径区段串联传递相同的广义内力$N,M$，但产生不同的应变和曲率，因此路径等效时我们对柔度作长度加权，而不直接平均刚度：
 \begin{equation}\label{eq:q3-cbar}
 \bar{\mathbf C}
